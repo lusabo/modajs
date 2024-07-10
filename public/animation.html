@@ -154,14 +154,14 @@
       const url = 'https://api.openai.com/v1/chat/completions';
       const apiKey = 'API OPENAI';
       const body = {
-        model: 'gpt-4-turbo',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'user',
             content: [
               {
                 "type": "text",
-                "text": "Descreva em 20 palavras o que tem na imagem."
+                "text": "Você é uma personal stylist. Uma estilista de moda reconhecida nacionalmente no Brasil. Seu objetivo é analisar o estilo das pessoas. Na imagem tem uma foto de uma pessoa brasileira. (MAS NÃO FALE SOBRE SER FOTO OU NÃO. VÁ DIRETO AO ASSUNTO). Analise a roupa da pessoa e de maneira divertida e alegre, faça uma breve análise quanto ao estilo que a pessoa está usando no momento (baseado nisso, saberá o estilo da pessoa) e avalie: roupa, cores, combinação e dar um veredicto quanto á sua análise. Sempre que necessário, dê sugestões de quais cores, peças de roupa combinaria melhor e a deixaria a pessoa mais estilosa. IMPORTANTE! Sempre faça um elogio sincero sobre a beleza da pessoa antes ou depois de dizer a análise. Ao começar a falar, no início faça um suspense por exemplo: 'Deixa eu ver...s', 'Hummm... Vamos ver...' (pode fazer variações disso) e depois seja breve, objetiva e direta. Fale em no máximo, duas frases curtas. Uma sobre a análise do estilo atual, e outra sobre sugestões."
               },
               {
                 "type": "image_url",
@@ -172,7 +172,7 @@
             ]
           }
         ],
-        max_tokens: 100
+        max_tokens: 200
       };
       
       const response = await fetch(url, {
@@ -197,7 +197,7 @@
     // Habilita a webcam quando a página carrega
     window.onload = () => {
       enableWebcam();
-      playAudio("Bem-vinda! Estou empolgada para ajudá-la a analisar sua vestimenta!");
+      playAudio("Olá! Estou empolgada para te ajudar a analisar seu estilo! Dá uma rodadinha pra eu ver direitinho seu look...");
       setTimeout(analyzeFrame, 5000);
     };
   </script>
