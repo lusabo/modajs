@@ -11,12 +11,26 @@
       height: 100%;
       background-color: white;
     }
-    canvas {
+    canvas, video {
       display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    video {
+      width: 200px; /* Ajuste o tamanho conforme necessário */
+      height: auto;
+      top: 10px; /* Distância do topo */
+      left: 10px; /* Distância da esquerda */
+      z-index: 3; /* Coloca o vídeo abaixo do canvas */
+    }
+    canvas {
+      z-index: 2; /* Coloca o canvas acima do vídeo */
     }
   </style>
 </head>
 <body>
+  <video id="webcam" autoplay></video>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
   <script>
@@ -29,7 +43,7 @@
           'xi-api-key': 'sk_6ade7cc21820013190a78acbca6b12ae07bc5a90ae4e7b1c'
         },
         body: JSON.stringify({
-          "text": 'Bem-vinda! Estou empolgada para ajudá-la a analisar sua vestimenta. Cada peça que você escolhe conta uma história única sobre seu estilo pessoal. Vamos explorar juntas a harmonia das cores, a combinação dos acessórios e o ajuste das roupas para garantir que você esteja transmitindo exatamente a imagem que deseja. Está pronta para descobrir o potencial máximo do seu guarda-roupa?',
+          "text": 'Bem-vinda! Estou empolgada para ajudá-la a analisar sua vestimenta!',
           "model_id": "eleven_multilingual_v2",
           "voice_settings": {
               "stability": 0.5,
@@ -110,8 +124,22 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Reproduz o áudio quando a página carrega
-    window.onload = playAudio;
+    // Função para habilitar a webcam
+    async function enableWebcam() {
+      try {
+        const video = document.getElementById('webcam');
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (error) {
+        console.error('Erro ao acessar a webcam:', error);
+      }
+    }
+
+    // Habilita a webcam quando a página carrega
+    window.onload = () => {
+      enableWebcam();
+      playAudio();
+    };
   </script>
 </body>
 </html>
