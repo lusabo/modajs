@@ -22,10 +22,10 @@
       height: auto;
       top: 10px; /* Distância do topo */
       left: 10px; /* Distância da esquerda */
-      z-index: 3; /* Coloca o vídeo abaixo do canvas */
+      z-index: 2;
     }
     canvas {
-      z-index: 2; /* Coloca o canvas acima do vídeo */
+      z-index: 1;
     }
   </style>
 </head>
@@ -40,7 +40,7 @@
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
-          'xi-api-key': 'sk_6ade7cc21820013190a78acbca6b12ae07bc5a90ae4e7b1c'
+          'xi-api-key': 'ELEVENLAB API KEY'
         },
         body: JSON.stringify({
           "text": 'Bem-vinda! Estou empolgada para ajudá-la a analisar sua vestimenta!',
@@ -135,10 +135,70 @@
       }
     }
 
+    // Função para capturar um frame da webcam
+    async function captureFrame() {
+      const video = document.getElementById('webcam');
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      return dataUrl;
+    }
+
+    // Função para enviar o frame para a API OpenAI Vision
+    async function analyzeFrame() {
+      const dataUrl = await captureFrame();
+      const base64Image = dataUrl.split(',')[1];
+      const url = 'https://api.openai.com/v1/chat/completions';
+      const apiKey = 'OPENAI KEY';
+      const body = {
+        model: 'gpt-4-turbo',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                "type": "text",
+                "text": "Descreva em 20 palavras o que tem na imagem."
+              },
+              {
+                "type": "image_url",
+                "image_url": {
+                  "url": "data:image/jpeg;base64,"+base64Image
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 100
+      };
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify(body)          
+      });
+      
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        throw new Error(`Request failed: ${response.status} - ${response.statusText}\nDetails: ${JSON.stringify(errorDetails)}`);
+      }
+
+      const data = await response.json();
+      console.log(data.choices[0].message.content);
+      return data;
+    }
+
     // Habilita a webcam quando a página carrega
     window.onload = () => {
       enableWebcam();
       playAudio();
+      setTimeout(analyzeFrame, 5000);
     };
   </script>
 </body>
